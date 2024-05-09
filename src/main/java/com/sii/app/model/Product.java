@@ -21,7 +21,7 @@ public class Product {
     @Column
     private String description;
     @Column(nullable = false)
-    private double price;
+    private Double price;
     @Column(nullable = false)
     private String currency;
 

@@ -27,7 +27,7 @@ public class Purchase {
     @JoinColumn(name = "promo_code_id")
     private PromoCode promoCode;
     @Column(name = "regular_price", nullable = false)
-    private double regularPrice;
+    private Double regularPrice;
     @Column
-    private double discount;
+    private Double discount;
 }

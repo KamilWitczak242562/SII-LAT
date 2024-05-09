@@ -29,7 +29,6 @@ public class ProductService implements ApiService<Product> {
         return productRepository.save(entity);
     }
 
-    @Override
     public Product update(Product entity, Long id) {
         if (entity == null) throw new InvalidParameterException("Passed product is invalid");
         if (id <= 0) throw new InvalidParameterException("Passed id is invalid.");
@@ -48,14 +47,6 @@ public class ProductService implements ApiService<Product> {
     @Override
     public List<Product> getAll() {
         return productRepository.findAll();
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        if (id <= 0) throw new InvalidParameterException("Passed id is invalid.");
-        if (!checkIfExist(id)) throw new EntityNotFoundException("Product not in database");
-        productRepository.deleteById(id);
-        return true;
     }
 
     @Override

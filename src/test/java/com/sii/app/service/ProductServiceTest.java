@@ -21,7 +21,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -195,42 +194,6 @@ class ProductServiceTest {
         assertEquals(products.get(1), productList.get(1));
 
         verify(productRepository).findAll();
-    }
-
-    @Test
-    void deleteProduct_WithValidParameter_ReturnsTrue() {
-        // given
-        long id = 1L;
-        Product product = new Product(1L, "Car", "Very good car", 4999.99, "USD");
-        given(productRepository.findAll()).willReturn(Collections.singletonList(product));
-
-        // when
-        boolean result = productService.delete(id);
-
-        // then
-        assertTrue(result);
-        verify(productRepository).deleteById(id);
-    }
-
-    @Test
-    void deleteProduct_WithInvalidParameter_ThrowsException() {
-        // given
-        long invalidId = -1;
-
-        // then & when
-        assertThrows(InvalidParameterException.class, () -> productService.delete(invalidId));
-    }
-
-    @Test
-    void deleteProduct_WithNonExistingProduct_ThrowsException() {
-        // given
-        long id = 1;
-
-        //when
-        when(productRepository.findAll()).thenReturn(Collections.emptyList());
-
-        // then
-        assertThrows(EntityNotFoundException.class, () -> productService.delete(id));
     }
 
 }
