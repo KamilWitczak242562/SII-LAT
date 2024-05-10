@@ -140,10 +140,10 @@ For testing purposes, the following data is available in the database:
 
 | PURCHASE_ID | DATE_OF_PURCHASE | DISCOUNT | REGULAR_PRICE | PRODUCT_ID |
 |-------------|------------------|----------|---------------|------------|
-| 1           | 2024-05-08       | null     | 1200.0        | 1          |
+| 1           | 2024-05-08       | 0.0      | 1200.0        | 1          |
 | 2           | 2024-05-08       | 20.99    | 1200.0        | 1          |
 | 3           | 2024-05-08       | 30.0     | 800.0         | 2          |
-| 4           | 2024-05-08       | null     | 250.0         | 3          |
+| 4           | 2024-05-08       | 0.0      | 250.0         | 3          |
 | 5           | 2024-05-08       | 50.5     | 700.0         | 4          |
 
 These sample data entries can be used to test the functionalities of the Discount Code Management System effectively.
