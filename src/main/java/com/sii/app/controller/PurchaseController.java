@@ -47,10 +47,19 @@ public class PurchaseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Promo code not found in database.");
         }
         Product product = productService.getOneById(id);
-        if (promoCodeService.numberOfUsagesIsAchieved(promoCode)) message = "Number of usages was achieved." ;
-        if (promoCodeService.isExpired(promoCode)) message = "Promo code is expired.";
-        if (!promoCodeService.isCurrencyTheSame(product, promoCode)) message = "Currencies of product price and promo code are not the same.";
         Purchase purchase = purchaseService.create(product, promoCode);
+        if (promoCodeService.numberOfUsagesIsAchieved(promoCode)) {
+            message = "Number of usages was achieved." ;
+            purchase.setDiscount(0.0);
+        }
+        if (promoCodeService.isExpired(promoCode)) {
+            message = "Promo code is expired.";
+            purchase.setDiscount(0.0);
+        }
+        if (!promoCodeService.isCurrencyTheSame(product, promoCode)){
+            message = "Currencies of product price and promo code are not the same.";
+            purchase.setDiscount(0.0);
+        }
         return ResponseEntity.ok().body(Map.of("message", message,
                 "response", purchase));
     }
