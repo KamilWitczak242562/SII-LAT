@@ -1,6 +1,7 @@
 package com.sii.app.service;
 
 import com.sii.app.model.PromoCode;
+import com.sii.app.model.Product;
 import com.sii.app.repository.PromoCodeRepository;
 import com.sii.app.util.PromoCodeGenerator;
 import jakarta.persistence.EntityExistsException;
@@ -14,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.security.InvalidParameterException;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -154,5 +156,167 @@ class PromoCodeServiceTest {
         when(promoCodeRepository.findPromoCodeByCode(code)).thenReturn(Optional.empty());
         //then
         assertThrows(EntityNotFoundException.class, () -> promoCodeService.getOnePromoCode(code));
+    }
+
+    @Test
+    void updatePromoCode_WithValidInput_ReturnsUpdatedPromoCode() {
+        //given
+        PromoCode promoCode = new PromoCode(50.99, "PLN", 10);
+        long id = 1;
+        when(promoCodeRepository.findById(id)).thenReturn(Optional.of(promoCode));
+        when(promoCodeRepository.save(any(PromoCode.class))).thenAnswer(invocation -> {
+            return invocation.<PromoCode>getArgument(0);
+        });
+
+        //when
+        PromoCode updatedPromoCode = promoCodeService.update(promoCode, id);
+
+        //then
+        assertNotNull(updatedPromoCode);
+        assertEquals("PLN", updatedPromoCode.getCurrency());
+        assertEquals(50.99, updatedPromoCode.getDiscount());
+        assertEquals(10, updatedPromoCode.getAllowedUsages());
+        verify(promoCodeRepository, times(1)).save(any(PromoCode.class));
+    }
+
+    @Test
+    void updatePromoCode_WithEmptyCurrency_ThrowsException() {
+        //given
+        PromoCode promoCode = new PromoCode(50.99, "", 10);
+        long id = 1;
+
+        //when & then
+        assertThrows(InvalidParameterException.class, () -> promoCodeService.update(promoCode, id));
+    }
+
+    @Test
+    void updatePromoCode_WithNaNDiscount_ThrowsException() {
+        //given
+        PromoCode promoCode = new PromoCode(Double.NaN, "PLN", 10);
+        long id = 1;
+
+        //when & then
+        assertThrows(InvalidParameterException.class, () -> promoCodeService.update(promoCode, id));
+    }
+
+    @Test
+    void updatePromoCode_WithNullAllowedUsages_ThrowsException() {
+        //given
+        PromoCode promoCode = new PromoCode(50.99, "PLN", null);
+        long id = 1;
+
+        //when & then
+        assertThrows(InvalidParameterException.class, () -> promoCodeService.update(promoCode, id));
+    }
+
+    @Test
+    void updatePromoCode_WithNullEntity_ThrowsException() {
+        //given
+        PromoCode promoCode = null;
+
+        //when & then
+        assertThrows(InvalidParameterException.class, () -> promoCodeService.update(promoCode, 1L));
+    }
+
+    @Test
+    void updatePromoCode_WithInvalidId_ThrowsException() {
+        //given
+        PromoCode promoCode = new PromoCode(50.99, "PLN", 10);
+
+        //when & then
+        assertThrows(InvalidParameterException.class, () -> promoCodeService.update(promoCode, -10L));
+    }
+
+    @Test
+    void updatePromoCode_WithNonExistingId_ThrowsException() {
+        //given
+        PromoCode promoCode = new PromoCode(50.99, "PLN", 10);
+        when(promoCodeRepository.findById(9999999L)).thenReturn(Optional.empty());
+
+        //when & then
+        assertThrows(EntityNotFoundException.class, () -> promoCodeService.update(promoCode, 9999999L));
+    }
+
+
+    @Test
+    public void isExpired_NotExpired() {
+        //given
+        PromoCode promoCode = new PromoCode();
+        promoCode.setExpirationDate(LocalDate.now().plusDays(1));
+
+        //when
+        boolean result = promoCodeService.isExpired(promoCode);
+
+        //then
+        assertFalse(result);
+    }
+
+    @Test
+    public void isExpired_Expired() {
+        //given
+        PromoCode promoCode = new PromoCode();
+        promoCode.setExpirationDate(LocalDate.now().minusDays(1));
+
+        //when
+        boolean result = promoCodeService.isExpired(promoCode);
+
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    public void numberOfUsagesIsAchieved_NotAchieved() {
+        //given
+        PromoCode promoCode = new PromoCode();
+        promoCode.setAllowedUsages(5); // Dozwolone 5 użyc
+
+        //when
+        boolean result = promoCodeService.numberOfUsagesIsAchieved(promoCode);
+
+        //then
+        assertFalse(result);
+    }
+
+    @Test
+    public void numberOfUsagesIsAchieved_Achieved() {
+        //given
+        PromoCode promoCode = new PromoCode();
+        promoCode.setAllowedUsages(0); // Wykorzystane dozwolone użycia
+
+        //when
+        boolean result = promoCodeService.numberOfUsagesIsAchieved(promoCode);
+
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    public void isCurrencyTheSame_SameCurrency() {
+        //given
+        Product product = new Product();
+        product.setCurrency("USD");
+        PromoCode promoCode = new PromoCode();
+        promoCode.setCurrency("USD");
+
+        //when
+        boolean result = promoCodeService.isCurrencyTheSame(product, promoCode);
+
+        //then
+        assertTrue(result);
+    }
+
+    @Test
+    public void isCurrencyTheSame_DifferentCurrency() {
+        //given
+        Product product = new Product();
+        product.setCurrency("USD");
+        PromoCode promoCode = new PromoCode();
+        promoCode.setCurrency("EUR");
+
+        //when
+        boolean result = promoCodeService.isCurrencyTheSame(product, promoCode);
+
+        //then
+        assertFalse(result);
     }
 }

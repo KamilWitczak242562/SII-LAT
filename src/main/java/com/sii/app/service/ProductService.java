@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService implements ApiService<Product> {
@@ -29,6 +30,7 @@ public class ProductService implements ApiService<Product> {
         return productRepository.save(entity);
     }
 
+    @Override
     public Product update(Product entity, Long id) {
         if (entity == null) throw new InvalidParameterException("Passed product is invalid");
         if (id <= 0) throw new InvalidParameterException("Passed id is invalid.");
@@ -47,6 +49,12 @@ public class ProductService implements ApiService<Product> {
     @Override
     public List<Product> getAll() {
         return productRepository.findAll();
+    }
+
+    public Product getOneById(Long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isEmpty()) throw new EntityNotFoundException("Product not found in database.");
+        return product.get();
     }
 
     @Override

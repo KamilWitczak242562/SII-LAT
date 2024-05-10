@@ -1,7 +1,9 @@
 package com.sii.app.service;
 
+import com.sii.app.model.Product;
 import com.sii.app.model.PromoCode;
 import com.sii.app.repository.PromoCodeRepository;
+import com.sii.app.util.PromoCodeCalculator;
 import com.sii.app.util.PromoCodeGenerator;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.security.InvalidParameterException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PromoCodeService implements ApiService<PromoCode> {
@@ -39,10 +42,36 @@ public class PromoCodeService implements ApiService<PromoCode> {
         return promoCodeRepository.findAll();
     }
 
+    @Override
+    public PromoCode update(PromoCode entity, Long id) {
+        if (entity == null) throw new InvalidParameterException("Passed promo code is invalid");
+        if (id <= 0) throw new InvalidParameterException("Passed id is invalid.");
+        if (entity.getCurrency().isEmpty() || Double.isNaN(entity.getDiscount()) || entity.getAllowedUsages() == null)
+            throw new InvalidParameterException("At least one of the Product parameters are invalid");
+        PromoCode promoCodeToChange = promoCodeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Promo code with given id was not found in the database."));
+        promoCodeToChange.setCurrency(entity.getCurrency());
+        promoCodeToChange.setDiscount(entity.getDiscount());
+        promoCodeToChange.setAllowedUsages(entity.getAllowedUsages());
+        return promoCodeRepository.save(promoCodeToChange);
+    }
+
     public PromoCode getOnePromoCode(String code) {
         if (code.isEmpty()) throw new InvalidParameterException("Promo code is invalid.");
         return promoCodeRepository.findPromoCodeByCode(code)
-                .orElseThrow(() -> new EntityNotFoundException("Product with given id was not found in the database."));
+                .orElseThrow(() -> new EntityNotFoundException("Promo code was not found in the database."));
+    }
+
+    public boolean isExpired(PromoCode promoCode) {
+        return promoCode.getExpirationDate().isBefore(LocalDate.now());
+    }
+
+    public boolean numberOfUsagesIsAchieved(PromoCode promoCode) {
+        return promoCode.getAllowedUsages() == 0;
+    }
+
+    public boolean isCurrencyTheSame(Product product, PromoCode promoCode) {
+        return product.getCurrency().equals(promoCode.getCurrency());
     }
 
     @Override

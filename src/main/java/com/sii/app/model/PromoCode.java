@@ -39,9 +39,15 @@ public class PromoCode {
         this.allowedUsages = allowedUsages;
     }
 
+    public PromoCode(Double discount, String currency, Integer allowedUsages, boolean isSecondType) {
+        this.discount = discount;
+        this.currency = currency;
+        this.allowedUsages = allowedUsages;
+        this.isSecondType = isSecondType;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PromoCode promoCode = (PromoCode) o;
         return Objects.equals(promoCodeId, promoCode.promoCodeId) && Objects.equals(code, promoCode.code) && Objects.equals(expirationDate, promoCode.expirationDate) && Objects.equals(discount, promoCode.discount) && Objects.equals(currency, promoCode.currency) && Objects.equals(allowedUsages, promoCode.allowedUsages);

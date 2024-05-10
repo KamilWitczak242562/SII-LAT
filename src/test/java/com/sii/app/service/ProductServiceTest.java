@@ -130,6 +130,32 @@ class ProductServiceTest {
     }
 
     @Test
+    void getOneById_WithValidId_ReturnsProduct() {
+        //given
+        Product product = new Product("Car", "Very good car", 4999.99, "USD");
+        long id = 1;
+        //when
+        when(productRepository.findById(id)).thenReturn(Optional.of(product));
+        Product foundProduct = productService.getOneById(id);
+        //then
+        assertNotNull(foundProduct);
+        assertEquals("Car", foundProduct.getName());
+        assertEquals("Very good car", foundProduct.getDescription());
+        assertEquals(4999.99, foundProduct.getPrice());
+        assertEquals("USD", foundProduct.getCurrency());
+    }
+
+    @Test
+    void getOneById_WithInvalidId_ReturnsProduct() {
+        //given
+        long invalidId = 999999;
+        when(productRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        //when & then
+        assertThrows(EntityNotFoundException.class, () -> productService.getOneById(invalidId));
+    }
+
+    @Test
     void updateProduct_WithNullProduct_ThrowsException() {
         // given
         long id = 1;

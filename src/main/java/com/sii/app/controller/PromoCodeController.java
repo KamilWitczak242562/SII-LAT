@@ -26,16 +26,17 @@ public class PromoCodeController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<?> getAllProducts() {
+    public ResponseEntity<?> getAllPromoCodes() {
         List<PromoCode> promoCodes = promoCodeService.getAll();
         return ResponseEntity.ok().body(Map.of("message", "Promo codes got successfully.",
                 "response", promoCodes));
     }
 
-    @PostMapping
-    public ResponseEntity<?> updateProduct(@RequestBody String code) {
+    @PostMapping("/getOne")
+    public ResponseEntity<?> getPromoCode(@RequestBody String code) {
         PromoCode promoCode = promoCodeService.getOnePromoCode(code);
         return ResponseEntity.ok().body(Map.of("message", "Promo code found successfully.",
                 "response", promoCode));
     }
+
 }

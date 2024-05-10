@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -19,13 +21,10 @@ public class Purchase {
     @Column(name = "purchase_id")
     private Long purchaseId;
     @Column(name = "date_of_purchase", nullable = false)
-    private Date dateOfPurchase;
-    @OneToOne
+    private LocalDate dateOfPurchase;
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
-    @OneToOne
-    @JoinColumn(name = "promo_code_id")
-    private PromoCode promoCode;
     @Column(name = "regular_price", nullable = false)
     private Double regularPrice;
     @Column
