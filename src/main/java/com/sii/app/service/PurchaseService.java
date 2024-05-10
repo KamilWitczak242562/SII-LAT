@@ -28,6 +28,7 @@ public class PurchaseService {
         purchase.setDateOfPurchase(LocalDate.now());
         purchase.setProduct(product);
         purchase.setRegularPrice(product.getPrice());
+        purchase.setDiscount(0.0);
         return purchaseRepository.save(purchase);
     }
 

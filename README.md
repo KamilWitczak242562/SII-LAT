@@ -115,6 +115,39 @@ Once the application is up and running, you can access the REST endpoints using 
 
 Make sure to replace `{productId}` with the actual product ID in the URLs above.
 
+### Sample Data for Testing
+
+For testing purposes, the following data is available in the database:
+
+#### Products:
+
+| PRODUCT_ID | CURRENCY | DESCRIPTION                           | NAME        | PRICE  |
+|------------|----------|---------------------------------------|-------------|--------|
+| 1          | USD      | Powerful laptop with SSD storage      | Laptop      | 1200.0 |
+| 2          | USD      |                                       | Smartphone  | 800.0  |
+| 3          | PLN      | Wireless noise-canceling headphones  | Headphones  | 250.0  |
+| 4          | PLN      |                                       | PC          | 700.0  |
+
+#### Promo Codes:
+
+| PROMO_CODE_ID | ALLOWED_USAGES | CODE                           | CURRENCY | DISCOUNT | EXPIRATION_DATE | IS_SECOND_TYPE |
+|---------------|----------------|--------------------------------|----------|----------|-----------------|----------------|
+| 1             | 5              | qqIxQ                          | USD      | 20.99    | 2024-12-31      | FALSE          |
+| 2             | 10             | YlQgxVGVIEbmqVHNSpsX9KQn       | PLN      | 30.0     | 2024-06-30      | TRUE           |
+| 3             | 3              | wFjA4Ok2                       | USD      | 50.5     | 2024-10-31      | FALSE          |
+
+#### Purchases:
+
+| PURCHASE_ID | DATE_OF_PURCHASE | DISCOUNT | REGULAR_PRICE | PRODUCT_ID |
+|-------------|------------------|----------|---------------|------------|
+| 1           | 2024-05-08       | null     | 1200.0        | 1          |
+| 2           | 2024-05-08       | 20.99    | 1200.0        | 1          |
+| 3           | 2024-05-08       | 30.0     | 800.0         | 2          |
+| 4           | 2024-05-08       | null     | 250.0         | 3          |
+| 5           | 2024-05-08       | 50.5     | 700.0         | 4          |
+
+These sample data entries can be used to test the functionalities of the Discount Code Management System effectively.
+
 ### Additional Notes
 
 - Ensure that the application is running before sending requests to the endpoints.
